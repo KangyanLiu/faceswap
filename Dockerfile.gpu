@@ -1,4 +1,10 @@
-FROM tensorflow/tensorflow:latest-gpu-py3
+#FROM tensorflow/tensorflow:latest-gpu-py3
+FROM tensorflow/tensorflow:latest-gpu-py3-jupyter
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get install -y tzdata \
+&& ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime \
+&& dpkg-reconfigure --frontend noninteractive tzdata
 
 RUN apt-get update -qq -y \
  && apt-get install -y libsm6 libxrender1 libxext-dev python3-tk\
@@ -7,7 +13,7 @@ RUN apt-get update -qq -y \
 
 COPY requirements.txt /opt/
 RUN pip3 install cmake
-RUN pip3 install dlib --install-option=--yes --install-option=USE_AVX_INSTRUCTIONS
+RUN pip3 install dlib
 RUN pip3 --no-cache-dir install -r /opt/requirements.txt && rm /opt/requirements.txt
 
 # patch for tensorflow:latest-gpu-py3 image
@@ -17,4 +23,5 @@ RUN cd /usr/local/cuda/lib64 \
  && ldconfig
 
 WORKDIR "/notebooks"
-CMD ["/run_jupyter.sh", "--allow-root"]
+#CMD ["/run_jupyter.sh", "--allow-root"]
+#CMD ['/bin/bash']
